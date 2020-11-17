@@ -14,9 +14,8 @@ clock = pygame.time.Clock()
 Info = pygame.display.Info()
 W, H = Info.current_w, Info.current_h
 
-MAX_SNOW = 150
+MAX_SNOW = 40
 BG_COLOR = (25, 25, 25)
-
 
 class Snow(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -33,7 +32,20 @@ class Snow(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
 
         self.rot = 0
+        #self.angle = random.randit(-1, 1)
         self.angle = random.randint(-1, 1)
+
+    def update(self):
+        self.rect.y += self.speed
+        if self.rect.top > H:
+            self.rect.bottom = 0
+
+
+        #self.rot = (self.rot = self.angle) % 360
+        self.rot = (self.rot + self.angle) % 360
+        self.image = pygame.transform.rotate(self.image_orig, self.rot)
+        self.rect = self.image.get_rect(center=self.rect.center)
+
 
 '____________________________________MAIN____________________________________'
 
@@ -59,6 +71,7 @@ init_snow(MAX_SNOW)
 while True:
     check_for_exit()
     snowgroup.update()
+    screen.fill(BG_COLOR)
     snowgroup.draw(screen)
     pygame.display.update()
     clock.tick(FPS)
